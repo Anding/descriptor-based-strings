@@ -14,8 +14,8 @@ include regex.f
 : look { addrT uT addrR uR -- }
 \ show the regex match within the text
 \ uses local variables, VFX style
-	addrT uT addrR uR match					( start len TRUE | FALSE) 
-	IF		
+	addrT uT addrR uR match					( start len TRUE | FALSE)
+	IF
 		CR addrT uT type					( addrF addrN)
 		CR swap spaces stars
 	ELSE
@@ -25,11 +25,11 @@ include regex.f
 ;
 
 : example s" my test sssstring" s" s*tr" match drop drop drop ;
-: speedtest 
+: speedtest
 	CR s" speedtest: " type key? drop
-	ticks 
-	10000000 0 DO example LOOP 
-	ticks swap - . ." ms" CR 
+	utime drop 									\ VFX ticks in ms
+	10000000 0 DO example LOOP
+	utime drop swap - . ." us" CR
 ;
 
 CR CR
@@ -47,7 +47,7 @@ T{ s" abccXabcd" s" X*abcd" match EXPECT 4 5 -1 }T
 T{ s" abc9d" s" c\dd" match EXPECT 2 3 -1 }T
 T{ s" abcd" s" \d" match EXPECT 0 }T
 T{ s" abc\d" s" c\\d" match EXPECT 2 3 -1 }T
-T{ s" hgfh" s" \h" match EXPECT 2 1 -1 }T 
+T{ s" hgfh" s" \h" match EXPECT 2 1 -1 }T
 T{ s" pqr12345abc" s" \d*abc" match EXPECT 3 8 -1 }T
 T{ s" pqr12345" s" r\d*" match EXPECT 2 6 -1 }T
 T{ s" abcd" s" cX*d" match EXPECT 2 2 -1 }T

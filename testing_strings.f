@@ -1,13 +1,12 @@
 include ttester.f
-include stacks.f
 include strings.f
 
 10 $initialize
 
-s" Paulum Caesar consituit...              " 26 swap false 
+s" Paulum Caesar consituit...              " 26 swap false
 $make CONSTANT s$
 
-s" armis agenda erunt" dup false 
+s" armis agenda erunt" dup false
 $make CONSTANT t$
 
 s" armis erunt" dup false
@@ -26,5 +25,5 @@ T{ s$ $len swap 0 0 $rem $len nip = EXPECT true }T
 T{ t$ 5 7 $rem u$ $= nip nip EXPECT true }T
 T{ u$ 0 100 $rem $len nip EXPECT 0 }T
 T{ s" 1234" s$ 2 $ins v$ $= nip nip EXPECT true }T
-				
+
 CR ." Regression testing complete - check results!"
