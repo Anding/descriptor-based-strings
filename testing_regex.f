@@ -66,7 +66,7 @@ T{ s" abc?def" s" \?" match EXPECT 3 1 -1 }T
 T{ s" abc\def" s" \\" match EXPECT 3 1 -1 }T
 T{ s" my spaceship" s" \sspace" match  EXPECT 2 6 -1 }T
 T{ s"       Hello it's me" s" \S+" match EXPECT 6 5 -1 }T
-T{ s"       76233" s" !\d+" match EXPECT 6 5 -1 }T
+T{ s"       76233" s" ^^\d+" match EXPECT 7 5 -1 }T
 T{ s" aaaaaaxaaa" s" ~a" match EXPECT 6 1 -1 }T
 T{ s" aaaaaaaaaa" s" ~a" match EXPECT 0 }T
 

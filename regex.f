@@ -223,19 +223,14 @@ BASE !
 
 : anchored-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
    'Text >R 	 						( R:addr0)			\ save address zero of Text
-   advanceRegex
-   RegexC '^' =  IF
-    	advanceRegex
-		#special-s countreps								\ overlook succeeding whitespaces
-		R> + >R												\ move the corresp
-   THEN
-   matchhere 							( ... addrN TRUE | FALSE R:addr0)
-   R> swap ;
+	matchhere 							( ... addrN TRUE | FALSE R:addr0)
+   	R> swap
+;
 
 : anchored-whitespace-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 start FALSE | addrN addr0 start TRUE )
     'Text >R 	 							( R:addr0)				\ save address zero of Text
 	advanceRegex
-	#special-s countreps R> over >R + >R  	( ... R:addr0 start)	\ count 0 or more whitespaces
+	#special-s countreps R> over >R +  >R  	( ... R:addr0 start)	\ count 0 or more whitespaces
 	matchhere
     R> R> rot ;
 
@@ -245,15 +240,21 @@ BASE !
 \ or FALSE if there is no match
 
     RegexC '^' = IF													\ look for an anchored match at the start of Text
-    	anchored-match?						( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
+	   advanceRegex
+	   RegexC '^' =  IF												\ ^^ notation means disregard preceeding whitespaces
+			anchored-whitespace-match?
+			IF >R - R> 1+ swap true EXIT THEN 						\ calculate length and start, exit true
+			drop drop 2drop 2drop false EXIT						\ if no match here, then no match at all
+	ELSE
+    	anchored-match?
 		IF - 0 swap true EXIT THEN				  		 		    \ calculate length and start, exit true
 		drop 2drop 2drop false EXIT									\ if no match here, then no match at all
-	THEN
+	THEN THEN
 
 	RegexC
 	'!' = IF														\ look for an anchored match and whitepaces
 		anchored-whitespace-match?
-		IF >R - R> swap true EXIT THEN 								\ calculate length and start, exit true
+		IF >R - R> 1+ swap true EXIT THEN 								\ calculate length and start, exit true
 		drop drop 2drop 2drop false EXIT							\ if no match here, then no match at all
 	THEN
 
