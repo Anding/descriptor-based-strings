@@ -24,10 +24,11 @@ include regex.f
 		CR
 ;
 
+\ : utime ticks 0 ; 						\ VFX Forth
 : example s" my test sssstring" s" s*tr" match drop drop drop ;
-: speedtest
+: speedtest									\ expect about 5 seconds VFX Forth, 125 seconds gforth
 	CR s" speedtest: " type key? drop
-	utime drop 									\ VFX ticks in ms
+	utime drop
 	10000000 0 DO example LOOP
 	utime drop swap - . ." us" CR
 ;

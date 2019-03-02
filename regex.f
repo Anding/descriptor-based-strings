@@ -42,7 +42,7 @@ DEFER matchc
      'Text c@
 ;
 
-: Text? ( addrT uT addrR uR -- addrT uT addrR uR uT )
+: Text? ( addrT uT addrR uR -- addrT uT addrR uR flag )
 \ preserve the stack and indicate if Text has character
     2over nip ;
 
@@ -245,7 +245,7 @@ BASE !
 \ or FALSE if there is no match
 
     RegexC '^' = IF													\ look for an anchored match at the start of Text
-    	anchored-match?
+    	anchored-match?						( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
 		IF - 0 swap true EXIT THEN				  		 		    \ calculate length and start, exit true
 		drop 2drop 2drop false EXIT									\ if no match here, then no match at all
 	THEN
@@ -253,20 +253,21 @@ BASE !
 	RegexC
 	'!' = IF														\ look for an anchored match and whitepaces
 		anchored-whitespace-match?
-		IF >R - R> swap true EXIT THEN 									\ calculate length and start, exit true
+		IF >R - R> swap true EXIT THEN 								\ calculate length and start, exit true
 		drop drop 2drop 2drop false EXIT							\ if no match here, then no match at all
 	THEN
 
-	( addrT' uT' addrR' uR' )
+	'Text >R 	 							( addrT uT addrR uR R:addr0)	\ save address zero of Text
+
 	BEGIN									( ... R:addr0)
 		'Text >R  				            ( ... R:addr0 addrT)			\ save the present text address
-		2dup 2>R 						    ( ... R:addrR uR addr0 addrT) 	\ save the full regex
-		matchhere							( ... addrN TRUE | FALSE R: addr0 addrT)
-		IF 2R> 2drop R@ - R> R> - swap true EXIT						\ calculate length and start, exit true
-		ELSE 2drop 2R> R> drop THEN	( ... R:addr0)						\ restore full regex - ready to try again
-		Text?
-	WHILE																\ while we have some text to search, proceed
+		2dup 2>R 						    ( ... R:addr0 addrT addrR uR) 	\ save the full regex
+		matchhere							( ... addrN TRUE | addrT uT addrR uR FALSE R: addr0 addrT addrR uR)
+		IF 2R> 2drop R@ - R> R> - swap true EXIT							\ calculate length and start, exit true
+		ELSE 2drop 2R> R> drop THEN			( ... R:addr0)					\ restore full regex - ready to try again
+		Text?								( addrT uT addrR uR flag R:addr0)
+	WHILE																	\ while we have some text to search, proceed
 		advanceText
 	REPEAT
-	2drop 2drop R> drop	false											\ Text exhausted before a match was found
+	2drop 2drop R> drop	false												\ Text exhausted before a match was found
 ;
