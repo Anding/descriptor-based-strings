@@ -40,6 +40,8 @@ Tstart
 
 T{ s" my test string" s" my" match }T 0 2 -1 ==
 T{ s" my test string" s" ^my" match }T 0 2 -1 ==
+T{ s" my test string" s" !my" match }T 0 2 -1 ==
+T{ s"    my test string" s" !my" match }T 3 2 -1 ==
 T{ s" my test string" s" test" match }T 3 4 -1 ==
 T{ s" my test string" s" ng" match }T 12 2 -1 ==
 T{ s" my test string" s" ng$" match }T 12 2 -1 ==
@@ -71,6 +73,8 @@ T{ s"       Hello it's me" s" \S+" match }T 6 5 -1 ==
 T{ s"       76233" s" !\d+" match }T 6 5 -1 ==
 T{ s" aaaaaaxaaa" s" ~a" match }T 6 1 -1 ==
 T{ s" aaaaaaaaaa" s" ~a" match }T 0 ==
+T{ s" my test string" s" my" parse-match }T 0 2 -1 ==
+T{ s"    my test string" s" my" parse-match }T 3 2 -1 ==
 
 Tend
 CR

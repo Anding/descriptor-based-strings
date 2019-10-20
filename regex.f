@@ -271,3 +271,15 @@ BASE !
 	REPEAT
 	2drop 2drop R> drop	false												\ Text exhausted before a match was found
 ;
+
+: parse-match ( addrT uT addrR uR -- first len TRUE | FALSE )
+\ search for regexp (addrR uR) at the start of the text, ignoring whitespaces (addrT uT)
+\ return the position of the start of the match, the length of the match, and TRUE
+\ or FALSE if there is no match
+    'Text >R 	 							( R:addr0)				\ save address zero of Text
+	#special-s countreps R> over >R + >R  	( ... R:addr0 start)	\ count 0 or more whitespaces
+	matchhere
+    R> R> rot 								( addrT uT addrR uR addr0 start FALSE | addrN addr0 start TRUE )
+    IF >R - R> swap true EXIT THEN 								\ calculate length and start, exit true
+	drop drop 2drop 2drop false EXIT							\ if no match here, then no match at all
+;
