@@ -145,7 +145,8 @@ variable $.data	0 $.data !							\ see $intialize
 \ Compare the character strings s$ and r$ and return true if they are equal
 \ Note, this compares the characters in the buffer, not the descriptors
 	over over $.len @ swap $.len @ dup rot <>
-	IF drop false exit THEN						( s$ r$ len)				\ different lengths		
+	IF drop false exit THEN						( s$ r$ len)				\ different lengths	
+	?dup 0= IF true exit THEN												\ both zero length
 	>R dup $.addr @ swap $.start @ +			( s$ r-addr R:len) 
 	swap dup $.addr @ swap $.start @ + R>		( s-addr r-addr len)
 	0 DO
