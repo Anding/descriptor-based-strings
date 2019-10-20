@@ -146,7 +146,8 @@ variable $.data	0 $.data !							\ see $intialize
 \ Note, this compares the characters in the buffer, not the descriptors
 	over over $.len @ swap $.len @ dup rot <>
 	IF drop false exit THEN						( s$ r$ len)				\ different lengths		
-	>R $.addr @ swap $.addr @ R>				( s-addr r-addr len)
+	>R dup $.addr @ swap $.start @ +			( s$ r-addr R:len) 
+	swap dup $.addr @ swap $.start @ + R>		( s-addr r-addr len)
 	0 DO
 		over over c@ swap c@ <>
 		IF false exit THEN													\ different character at this position
