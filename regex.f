@@ -276,24 +276,25 @@ BASE !
 \ search for regexp (addrR uR) at the start of the text, ignoring whitespaces (addrT uT)
 \ return the position of the start of the match, the length of the match, and TRUE
 \ or FALSE if there is no match
-    2over 2over 'Text >R 	 				( ... R:addr0)			\ save address zero of Text
-	#special-s countreps R> over >R + >R  	( ... R:first start)	\ count 0 or more whitespaces
+    2over 2over 'Text >R 	 				( ... R:addr0)		\ save address zero of Text
+	#special-s countreps R> over >R + >R  	( ... R:first start)\ pass through 0 or more whitespaces
 	matchhere								( ... addrN TRUE | addrT uT addrR uR FALSE R: first start )
     R> R> rot 								( ... addrN addr0 start TRUE | addrT uT addrR uR addr0 start FALSE )
-    IF 										
+    IF 															\ matched ok, now check for a following whitespace or end of text
     	>R - R> swap 2dup >R >R 			( addrT uT addrR uR first len R:len first)
     	+ rot >R >R	dup >R					( addrT uT next R:len first uR addrR next)
-    	- dup IF							( addrT uT' R:len first uR addrR next)	\ check for a following whitespace
+    	- dup IF												\ more text ok, now check for a following whitespace
     		swap R> + swap R> R>			( addrT' uT' addrR addrT R:len first)
     		#special-s countreps			( addrT' uT' addrR addrT count R:len first)
-    		IF
-    			2drop 2drop R> R> true EXIT						\ at least one following whitespace
-    		ELSE
-    			2drop 2drop R> R> drop drop false EXIT			\ no following whitespace
+    		IF													\ following white space ok
+    			2drop 2drop R> R> true 						
+    		ELSE												\ no following whitespace
+    			2drop 2drop R> R> drop drop false 			
     		THEN
-    	ELSE
-    		2drop R> drop R> R> 2drop R> R> true EXIT			\ end of string (no need for a whitespace)
+    	ELSE													\ end of text (no need for a whitespace)
+    		2drop R> drop R> R> 2drop R> R> true 			
     	THEN
-    THEN 														
-	drop drop 2drop 2drop 2drop 2drop false EXIT				\ if no match here, then no match at all
+    ELSE 														\ no match											
+		drop drop 2drop 2drop 2drop 2drop false 
+	THEN				
 ;
