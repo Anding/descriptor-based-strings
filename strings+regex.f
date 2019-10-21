@@ -1,7 +1,7 @@
 \ incorporate the regular expression matcher into the strings library
 \ requires strings.f and regex.f (or a derivative)
 
-: $regex ( s$ r$ -- a$ b$ s$ TRUE | FALSE)
+: $regex ( s$ r$ -- a$ b$ s$ TRUE | s$ FALSE)
 \ Search for regex r$ in string s$ if the regexp is found, a$ is the
 \ substring before the first match, b$ is the first match
 \ s$ (modified) is the rest of the string and the TOS is true;
@@ -10,9 +10,9 @@
 \ a$, b$ and s$ all reference portions of the same character data in memory
 \ See Ertl EF2013
 	swap over over >R >R				( r$ s$ R:s$ r$)
-	$s									( r$ s-addr s-n R:r$ s$)
-	rot $s								( s-addr s-n r-addr r-n R:r$ s$)		\ traditional representations
-	match 								( first len TRUE | FALSE R:r$ s$)
+	$s									( r$ s-addr s-n R:s$ r$)
+	rot $s								( s-addr s-n r-addr r-n R:s$ r$)		\ traditional representations
+	match 								( first len TRUE | FALSE R:s$ r$)
 	IF																			\ match found
 		R> $drop						( first len R:s$)						\ recycle r$ (unless permenent)
 		over							( first len a-len R:s$)					\ compute length of substring before the first match
@@ -30,17 +30,17 @@
 		R> R> R> rot true				( a$ b$ s$ true)
 	ELSE																		\ no match
 		R> $drop 																\ recycle r$ (unless permenent)
-		R> drop																	\ preserve s$
+		R> 																		\ preserve s$
 		false
 	THEN
 ;
 
-: $parse ( s$ r$ -- b$ s$ TRUE | FALSE)
+: $parse ( s$ r$ -- b$ s$ TRUE | s$ FALSE)
 \ Search for regex r$ at the start of string s$ ignoring whitespaces if the regexp is found
 	swap over over >R >R				( r$ s$ R:s$ r$)
-	$s									( r$ s-addr s-n R:r$ s$)
-	rot $s								( s-addr s-n r-addr r-n R:r$ s$)		\ traditional representations
-	parse-match 						( first len TRUE | FALSE R:r$ s$)
+	$s									( r$ s-addr s-n R:s$ r$)
+	rot $s								( s-addr s-n r-addr r-n R:s$ r$)		\ traditional representations
+	parse-match 						( first len TRUE | FALSE R:s$ r$)
 	IF																			\ match found
 		R> $drop						( first len R:s$)						\ recycle r$ (unless permenent)
 		over over						( first len first len R:s$)
@@ -54,7 +54,7 @@
 		R> R> swap true					( b$ s$ true)
 	ELSE																		\ no match
 		R> $drop 																\ recycle r$ (unless permenent)
-		R> drop																	\ preserve s$
+		R> 																		\ preserve s$
 		false
 	THEN
 ;
