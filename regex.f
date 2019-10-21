@@ -276,10 +276,24 @@ BASE !
 \ search for regexp (addrR uR) at the start of the text, ignoring whitespaces (addrT uT)
 \ return the position of the start of the match, the length of the match, and TRUE
 \ or FALSE if there is no match
-    'Text >R 	 							( R:addr0)				\ save address zero of Text
-	#special-s countreps R> over >R + >R  	( ... R:addr0 start)	\ count 0 or more whitespaces
-	matchhere
-    R> R> rot 								( addrT uT addrR uR addr0 start FALSE | addrN addr0 start TRUE )
-    IF >R - R> swap true EXIT THEN 								\ calculate length and start, exit true
-	drop drop 2drop 2drop false EXIT							\ if no match here, then no match at all
+    2over 2over 'Text >R 	 				( ... R:addr0)			\ save address zero of Text
+	#special-s countreps R> over >R + >R  	( ... R:first start)	\ count 0 or more whitespaces
+	matchhere								( ... addrN TRUE | addrT uT addrR uR FALSE R: first start )
+    R> R> rot 								( ... addrN addr0 start TRUE | addrT uT addrR uR addr0 start FALSE )
+    IF 										
+    	>R - R> swap 2dup >R >R 			( addrT uT addrR uR first len R:len first)
+    	+ rot >R >R	dup >R					( addrT uT next R:len first uR addrR next)
+    	- dup IF							( addrT uT' R:len first uR addrR next)	\ check for a following whitespace
+    		swap R> + swap R> R>			( addrT' uT' addrR addrT R:len first)
+    		#special-s countreps			( addrT' uT' addrR addrT count R:len first)
+    		IF
+    			2drop 2drop R> R> true EXIT						\ at least one following whitespace
+    		ELSE
+    			2drop 2drop R> R> drop drop false EXIT			\ no following whitespace
+    		THEN
+    	ELSE
+    		2drop R> drop R> R> 2drop R> R> true EXIT			\ end of string (no need for a whitespace)
+    	THEN
+    THEN 														
+	drop drop 2drop 2drop 2drop 2drop false EXIT				\ if no match here, then no match at all
 ;
