@@ -1,6 +1,11 @@
 include ../simple-tester/simple-tester.fs
 include strings.f
 
+: $dump ( s$ -- s$)
+\ dump the memory contents of s$
+	dup $.string dump
+;
+
 20 $initialize
 
 s" Paulum Caesar consituit...              " 26 swap false 
