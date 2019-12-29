@@ -63,12 +63,12 @@ variable $.data	0 $.data !							\ see $intialize
 \ Temporary string descriptors are recycled when consumed by a word; permenant string descriptors are not
 \ Consuming and recycling the descriptor of a temporary string does not affect / deallocate the character data itself
 
-: $s ( s$ -- c-addr u)
+: $s ( s$ -- s$ c-addr u)
 \ provide a legacy reference to a string
 	>R
 	R@ $.addr @ R@ $.start @ +		( c-addr R:s$)
 	R@ $.len @						( c-addr u R:s$)
-	R> $drop											\ recycle the descriptor
+	R> rot rot
 ;
 
 : $len ( s$ -- s$ n)
