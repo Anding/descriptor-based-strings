@@ -10,8 +10,8 @@
 \ a$, b$ and s$ all reference portions of the same character data in memory
 \ See Ertl EF2013
 	swap over over >R >R				( r$ s$ R:s$ r$)
-	$s									( r$ s-addr s-n R:s$ r$)
-	rot $s								( s-addr s-n r-addr r-n R:s$ r$)		\ traditional representations
+	$s rot drop							( r$ s-addr s-n R:s$ r$)
+	rot $s rot drop						( s-addr s-n r-addr r-n R:s$ r$)		\ traditional representations
 	match 								( first len TRUE | FALSE R:s$ r$)
 	IF																			\ match found
 		R> $drop						( first len R:s$)						\ recycle r$ (unless permenent)
@@ -38,8 +38,8 @@
 : $parse ( s$ r$ -- b$ s$ TRUE | s$ FALSE)
 \ Search for regex r$ at the start of string s$ ignoring whitespaces if the regexp is found
 	swap over over >R >R				( r$ s$ R:s$ r$)
-	$s									( r$ s-addr s-n R:s$ r$)
-	rot $s								( s-addr s-n r-addr r-n R:s$ r$)		\ traditional representations
+	$s rot drop							( r$ s-addr s-n R:s$ r$)
+	rot $s rot drop						( s-addr s-n r-addr r-n R:s$ r$)		\ traditional representations
 	parse-match 						( first len TRUE | FALSE R:s$ r$)
 	IF																			\ match found
 		R> $drop						( first len R:s$)						\ recycle r$ (unless permenent)
