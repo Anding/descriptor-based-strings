@@ -279,12 +279,12 @@ BASE !
     2over 2over 'Text >R 	 				( ... R:addr0)		\ save address zero of Text
 	#special-s countreps R> over >R + >R  	( ... R:first start)\ pass through 0 or more whitespaces
 	matchhere								( ... addrN TRUE | addrT uT addrR uR FALSE R: first start )
-    R> R> rot 								( ... addrN addr0 start TRUE | addrT uT addrR uR addr0 start FALSE )
-    IF 															\ matched ok, now check for a following whitespace or end of text
-    	>R - R> swap 2dup >R >R 			( addrT uT addrR uR first len R:len first)
-    	+ rot >R >R	dup >R					( addrT uT next R:len first uR addrR next)
-    	- dup IF												\ more text ok, now check for a following whitespace
-    		swap R> + swap R> R>			( addrT' uT' addrR addrT R:len first)
+    R> R> rot								( ... addrN addr0 start TRUE | addrT uT addrR uR addr0 start FALSE )
+    IF														\ matched ok, now check for a following whitespace or end of text
+    	>R - R> swap 2dup >R >R				( addrT uT addrR uR first len R:len first)
+    	+ -rot >R >R	dup >R				( addrT uT next R:len first uR addrR next)
+    	- 1+ dup IF										\ more text ok, now check for a following whitespace
+    		swap R> + swap R> R> 			( addrT' uT' addrR uR R:len first)
     		#special-s countreps			( addrT' uT' addrR addrT count R:len first)
     		IF													\ following white space ok
     			2drop 2drop R> R> true 						
