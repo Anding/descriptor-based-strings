@@ -111,6 +111,17 @@ variable $.data	0 $.data !							\ see $intialize
 	r@ $.len ! R>		( s$)							\ remember the new len
 ;
 
+: $prune ( s$ x y -- s$)
+\ Modify s$ by removing x characters from the start and y characters from the end
+\ x and y are permitted to be negative if the string buffer contains additional characters on the start and end of the string
+\ boundaries are checked and overpruning simply results in a null string
+	>R >R $len			( s$ len R:y x )
+	R@ -				( s$ len' R:y x)
+	R> swap				( s$ a len' R:y)
+	R> -				( s$ a n)
+	$sub
+;
+
 : $app ( s$ c-addr u -- s$)
 \ Append the text characters from c-addr u to s$ and return the augmented string
 \ The length of the string is always truncated to fit within size
@@ -144,9 +155,9 @@ variable $.data	0 $.data !							\ see $intialize
 : $= ( s$ r$ -- s$ r$ flag)
 \ Compare the character strings s$ and r$ and return true if they are equal
 \ Note, this compares the characters in the buffer, not the descriptors
-	over over $.len @ swap $.len @ dup rot <>
-	IF drop false exit THEN						( s$ r$ len)				\ different lengths	
-	?dup 0= IF true exit THEN												\ both zero length
+	over over $.len @ swap $.len @ dup rot <>	( s$ r$ len flag)
+	IF drop false exit THEN						( s$ r$ len)				\ check if different lengths	
+	?dup 0= IF true exit THEN					( s$ r$ len)				\ check if both zero length
 	>R dup $.addr @ swap $.start @ +			( s$ r-addr R:len) 
 	swap dup $.addr @ swap $.start @ + R>		( s-addr r-addr len)
 	0 DO
