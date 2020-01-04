@@ -65,6 +65,7 @@ DEFER matchc
 	>R 2>R over c@					( addrT uT x R:c uR addrR)
 	2R> rot R>						( addrT uT addrR uR x c)
 	'd' case? IF  '0' '9' 1+  within  EXIT THEN			\ \d matches any decimal digit, equiv. to [0-9]
+	'b' case? IF  '0' '1' 1+  within  EXIT THEN			\ \b matches any binary digit
 	'h' case? IF 										\ \h matches any hexadecimal digit, case insensitive
 			      dup '0' '9' 1+ within >R			( addrT ut addrR uR x R:flag)
 			      dup 'A' 'F' 1+  within >R
@@ -283,7 +284,8 @@ BASE !
     IF														\ matched ok, now check for a following whitespace or end of text
     	>R - R> swap 2dup >R >R				( addrT uT addrR uR first len R:len first)
     	+ -rot >R >R	dup >R				( addrT uT next R:len first uR addrR next)
-    	- 1+ dup IF										\ more text ok, now check for a following whitespace
+    	- dup
+    	IF										\ more text ok, now check for a following whitespace
     		swap R> + swap R> R> 			( addrT' uT' addrR uR R:len first)
     		#special-s countreps			( addrT' uT' addrR addrT count R:len first)
     		IF													\ following white space ok
