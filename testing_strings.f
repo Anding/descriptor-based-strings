@@ -1,47 +1,67 @@
 include ../simple-tester/simple-tester.fs
 include strings.f
 
-: $dump ( s$ -- s$)
-\ dump the memory contents of s$
+: $dump ( s$ -- s$, dump the memory contents of s$)
+	cr $s type
 	dup $.string dump
 ;
 
-20 $initialize
+: $q ( c-addr n -- s$, make a quick temporary string)
+	dup false $make
+;
 
-s" Paulum Caesar consituit...              " 26 swap false 
+: $T= ( s$ t$ -- flag, test strings for equality and attempt to recycle them)
+	$= -rot drop drop  \ subsequent tests show a memory excepton with $drop $drop  -- need to debug
+;
+
+255 $initialize
+
+s" Paulum Caesar consituit...              " 26 swap true 
 $make CONSTANT s$
 
-s" armis agenda erunt" dup false 
+s" armis agenda erunt" dup true 
 $make CONSTANT t$
 
-s" armis erunt" dup false
+s" armis erunt" dup true
 $make CONSTANT u$
 
-s" Pa1234ulum Caesar consituit..." dup false
+s" Pa1234ulum Caesar consituit..." dup true
 $make CONSTANT v$
 
-s" 1234" dup false
+s" 1234" dup true
 $make CONSTANT w$
 
-s" 12" dup false
+s" 12" dup true
 $make CONSTANT x$
 
 CR
 Tstart
 
+\ structure lookup
 T{ s$ $len nip }T 26 ==
-T{ s$ $size nip }T 40 }T
-T{ s$ t$ $= nip nip }T false ==
-T{ s$ s$ $= nip nip }T true ==
+T{ s$ $size nip }T 40 ==
+
+\ $=
+T{ s$ s" 1234" $q $T= }T false ==
+T{ s$ s" Paulum Caesar consituit..." $q $T= }T true ==
+
 T{ s$ $len swap 0 0 $rem $len nip = }T true ==
-T{ t$ 5 7 $rem u$ $= nip nip }T true ==
+T{ t$ 5 7 $rem u$ $T= }T true ==
 T{ u$ 0 100 $rem $len nip }T 0 ==
 T{ s" 1234" s$ 2 $ins v$ $= nip nip }T true ==
-T{ v$ 2 4 $sub w$ $= nip nip }T true ==
-T{ w$ 0 2 $sub x$ $= nip nip }T true ==
-T{ w$ $dup nip x$ $= nip nip }T true ==
-T{ w$ $dup $drop drop }T ==			
-	
+T{ v$ 2 4 $sub w$ $T= }T true ==
+T{ w$ 0 2 $sub x$ $T= }T true ==
+T{ w$ $dup nip x$ $T= }T true ==
+T{ w$ $dup $drop drop }T ==	
+
+\ $prune
+T{ s" ABCDEF" $q 1 2 $prune s" BCD" $q $T= }T true ==
+T{ s" ABCDEF" $q 0 0 $prune s" ABCDEF" $q $T= }T true ==		
+T{ s" ABCDEF" $q 6 0 $prune s" " $q $T= }T true ==	
+T{ s" ABCDEF" $q 0 6 $prune s" " $q $T= }T true ==	
+T{ s" ABCDEF" $q 3 3 $prune s" " $q $T= }T true ==	
+T{ s" ABCDEF" $q 4 4 $prune s" " $q $T= }T true ==	
+\ T{ s" ABCDEFGHIJ" $q 3 4 $sub ( CDEF) -1 -2 $prune s" BCDEFGH" $q $T= }T true ==
 Tend
 CR
 
