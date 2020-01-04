@@ -1,7 +1,7 @@
 \ incorporate the regular expression matcher into the strings library
 \ requires strings.f and regex.f (or a derivative)
 
-: $regex ( s$ r$ -- a$ b$ s$ TRUE | s$ FALSE)
+: $match ( s$ r$ -- a$ b$ s$ TRUE | s$ FALSE)
 \ Search for regex r$ in string s$ if the regexp is found, a$ is the
 \ substring before the first match, b$ is the first match
 \ s$ (modified) is the rest of the string and the TOS is true;
