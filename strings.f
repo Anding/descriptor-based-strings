@@ -83,6 +83,11 @@ variable $.data	0 $.data !							\ see $intialize
 	MSB invert and										\ ignore the MSB flag
 ;
 
+: $start ( s$ -- s$ n)
+\ return the position of the first character in the buffer
+	dup $.start @
+;
+
 : $dup ( s$ -- s$ r$)
 \ Copy the string descriptor s$ to a new string descriptor r$
 \ Both $s and $r are on the parameter stack
@@ -213,4 +218,30 @@ variable $.data	0 $.data !							\ see $intialize
 	R>											( s$)
 ;
 
+: $write ( s$ c -- s$)
+\ write the character c to the end of string s$
+\ if the buffer is already full then no write occurs
+\ DEBUG - no need for $write now we gave $write-n
+	swap >R R@ $size swap $start swap $len nip	( c size start len R:s$)
+	+ swap										( c next size R:s$)				\ next is character after the current last character
+	over - 1 < 									( c next flag R:s$)
+	IF drop drop R> exit THEN					( c next R:s$)					\ no capacity
+	R@ $.addr @ + c!							( R:s$)
+	1 R@ $.len +! R>							( s$)
+;	
 
+: $write-n ( s$ x n -- s$)
+\ write the least significant n bytes of x to the end of string s$ in little endian format)
+\ no write occurs if the buffer does not have n bytes of capacity
+	rot >R dup R@ $size swap $start swap $len nip 	( x n n size start len R:s$)
+	+ swap										( x n n next size R:s$)
+	over - rot <								( x n next flag R:s$)			\ next is character after the current last character
+	IF drop drop drop R> exit THEN				( x n next R:s$)				\ insufficient capacity
+	swap dup R@ $.len +! swap	 				( x n next R:s$)				\ update len
+	R@ $.addr @ + swap							( x addr n R:s$)
+	0 DO
+		over over swap 255 and swap c! 			( x addr R:s$)
+		1+ swap 8 rshift swap					( x' addr' R:s$)
+	LOOP
+	drop drop R>								( s$)
+;

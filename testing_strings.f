@@ -61,8 +61,18 @@ T{ s" ABCDEF" $q 6 0 $prune s" " $q $T= }T true ==
 T{ s" ABCDEF" $q 0 6 $prune s" " $q $T= }T true ==	
 T{ s" ABCDEF" $q 3 3 $prune s" " $q $T= }T true ==	
 T{ s" ABCDEF" $q 4 4 $prune s" " $q $T= }T true ==	
-\ T{ s" ABCDEFGHIJ" $q 3 4 $sub ( CDEF) -1 -2 $prune s" BCDEFGH" $q $T= }T true ==
+T{ s" ABCDEFGHIJ" $q 3 4 $sub ( DEFG) -1 -2 $prune s" CDEFGHI" $q $T= }T true ==
+
+\ $write 
+T{ s" ABC " 3 swap false $make 'D' $write s" ABCD" $q $T= }T true ==
+T{ s" ABC" 3 swap false $make 'D' $write s" ABC" $q $T= }T true ==
+
+\ $write-n
+T{ s" ABC  " 3 swap false $make 0x4544 2 $write-n s" ABCDE" $q $T= }T true ==
+T{ s" ABC  " 5 swap false $make 0x4544 2 $write-n s" ABC  " $q $T= }T true ==
+
+cr
 Tend
-CR
+cr
 
 bye
