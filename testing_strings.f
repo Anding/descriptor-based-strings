@@ -11,7 +11,7 @@ include strings.f
 ;
 
 : $T= ( s$ t$ -- flag, test strings for equality and attempt to recycle them)
-	$= -rot drop drop  \ subsequent tests show a memory excepton with $drop $drop  -- need to debug
+	$= -rot $drop $drop
 ;
 
 255 $initialize

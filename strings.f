@@ -158,14 +158,14 @@ variable $.data	0 $.data !							\ see $intialize
 	over over $.len @ swap $.len @ dup rot <>	( s$ r$ len flag)
 	IF drop false exit THEN						( s$ r$ len)				\ check if different lengths	
 	?dup 0= IF true exit THEN					( s$ r$ len)				\ check if both zero length
-	>R dup $.addr @ swap $.start @ +			( s$ r-addr R:len) 
-	swap dup $.addr @ swap $.start @ + R>		( s-addr r-addr len)
+	>R over over dup $.addr @ swap $.start @ +	( s$ r$ s$ r-addr R:len) 
+	swap dup $.addr @ swap $.start @ + R>		( s$ r$ s-addr r-addr len)
 	0 DO
 		over over c@ swap c@ <>
-		IF false exit THEN													\ different character at this position
-		1+ swap 1+ swap							( s-addr' r-addr') 
+		IF unloop drop drop false exit THEN										\ different character at this position
+		1+ swap 1+ swap							( s$ r$ s-addr' r-addr') 
 	LOOP
-	true
+	drop drop true
 ;				
 		
 : $save ( s$ -- addr)
