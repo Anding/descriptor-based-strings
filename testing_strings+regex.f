@@ -69,14 +69,16 @@ T{ s" %1001 " $q s" %\b+" $q $parse >R $drop $drop R> }T true ==
 T{ s" %100I " $q s" %\b+" $q $parse >R $drop R> }T false ==
 T{ s" %1001 " $q s" %\b+" $q $parse drop $drop s" %1001" $q $T= }T true ==
 
-\ colon definitions - option 1 - assume that colon definitons take the format ": NAME ... ;"
+\ colon definitions - option 1 - match the whole definition at once ": NAME ... ;"
 T{ s" : squ dup * ; etc." $q s" :~;+;" $q $match >R $drop $drop $drop R> }T true ==
 T{ s" : squ dup * ; etc." $q s" :~;+;" $q $parse >R $drop $drop R> }T true ==
 T{ s" : squ dup * ; etc." $q s" :~;+;" $q $parse drop $drop s" : squ dup * ;" $q $T= }T true ==	
 
 \ colon defintions - option 2 - just match ": NAME"
-
-
+T{ s" : squ dup * ; etc." $q s" :\s+\S+" $q $match >R $drop $drop $drop R> }T true ==
+T{ s" : squ dup * ; etc." $q s" :\s+\S+" $q $parse >R $drop $drop R> }T true ==
+T{ s" : squ dup * ; etc." $q s" :\s+\S+" $q $parse drop $drop s" : squ" $q $T= }T true ==	
+	
 \ macro definitions  - assume that macros take the format : ... ;;
 T{ s" : squ dup * ;; etc." $q s" :~;+;;" $q $match >R $drop $drop $drop R> }T true ==
 T{ s" : squ dup * ;; etc." $q s" :~;+;;" $q $parse >R $drop $drop R> }T true ==
