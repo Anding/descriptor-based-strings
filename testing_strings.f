@@ -38,6 +38,7 @@ CR
 Tstart
 
 \ structure lookup
+T{ s" ABC" over >R dup false $make $addr swap $drop }T R> ==
 T{ s$ $len nip }T 26 ==
 T{ s$ $size nip }T 40 ==
 
@@ -45,12 +46,19 @@ T{ s$ $size nip }T 40 ==
 T{ s$ s" 1234" $q $T= }T false ==
 T{ s$ s" Paulum Caesar consituit..." $q $T= }T true ==
 
+\ $rem
 T{ s$ $len swap 0 0 $rem $len nip = }T true ==
 T{ t$ 5 7 $rem u$ $T= }T true ==
 T{ u$ 0 100 $rem $len nip }T 0 ==
+
+\ $ins
 T{ s" 1234" s$ 2 $ins v$ $= nip nip }T true ==
+
+\ $sub
 T{ v$ 2 4 $sub w$ $T= }T true ==
 T{ w$ 0 2 $sub x$ $T= }T true ==
+
+\ $dup
 T{ w$ $dup nip x$ $T= }T true ==
 T{ w$ $dup $drop drop }T ==	
 
@@ -63,13 +71,17 @@ T{ s" ABCDEF" $q 3 3 $prune s" " $q $T= }T true ==
 T{ s" ABCDEF" $q 4 4 $prune s" " $q $T= }T true ==	
 T{ s" ABCDEFGHIJ" $q 3 4 $sub ( DEFG) -1 -2 $prune s" CDEFGHI" $q $T= }T true ==
 
-\ $write 
-T{ s" ABC " 3 swap false $make 'D' $write s" ABCD" $q $T= }T true ==
-T{ s" ABC" 3 swap false $make 'D' $write s" ABC" $q $T= }T true ==
+\ $write
+T{ s" ABCD  " 4 swap false $make s" EF" $write s" ABCDEF" $q $T= }T true ==
+T{ s" ABCD  " $q 0 3 $sub s" XYZ" $write s" ABCXYZ" $q $T= }T true ==
 
-\ $write-n
-T{ s" ABC  " 3 swap false $make 0x4544 2 $write-n s" ABCDE" $q $T= }T true ==
-T{ s" ABC  " 5 swap false $make 0x4544 2 $write-n s" ABC  " $q $T= }T true ==
+\ $push 
+T{ s" ABC " 3 swap false $make 'D' $push s" ABCD" $q $T= }T true ==
+T{ s" ABC" 3 swap false $make 'D' $push s" ABC" $q $T= }T true ==
+
+\ $push-n
+T{ s" ABC  " 3 swap false $make 0x4544 2 $push-n s" ABCDE" $q $T= }T true ==
+T{ s" ABC  " 5 swap false $make 0x4544 2 $push-n s" ABC  " $q $T= }T true ==
 
 cr
 Tend

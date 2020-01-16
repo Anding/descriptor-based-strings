@@ -88,6 +88,11 @@ variable $.data	0 $.data !							\ see $intialize
 	dup $.start @
 ;
 
+: $addr ( s$ -- s$ addr)
+\ return the address of the start of the string buffer
+	dup $.addr @
+;
+
 : $dup ( s$ -- s$ r$)
 \ Copy the string descriptor s$ to a new string descriptor r$
 \ Both $s and $r are on the parameter stack
@@ -127,9 +132,9 @@ variable $.data	0 $.data !							\ see $intialize
 	$sub
 ;
 
-: $app ( s$ c-addr u -- s$)
-\ Append the text characters from c-addr u to s$ and return the augmented string
-\ The length of the string is always truncated to fit within size
+: $write ( s$ c-addr u -- s$)
+\ write the text characters from c-addr u to s$ as an append and return the augmented string
+\ if necessary, the write is truncated to fit within size
 	rot >R
 	R@ $.size @ MSB invert and	 			( c-addr u size R:s$)
 	R@ $.len @ - 							( c-addr u size-len R:s$)
@@ -153,7 +158,7 @@ variable $.data	0 $.data !							\ see $intialize
 	>R
 	R@ $.addr @ R@ $.start @ +		( s$ c-addr R:r$)
 	R@ $.len @						( s$ c-addr u R:r$)						\ locate the character data in r$
-	$app							( s$ R:r$)								\ append r$ to the end of s$
+	$write							( s$ R:r$)								\ append r$ to the end of s$
 	R> $drop																\ recycle r$
 ;
 
@@ -173,21 +178,6 @@ variable $.data	0 $.data !							\ see $intialize
 	drop drop true
 ;				
 		
-: $save ( s$ -- addr)
-\ Call allocate to obtain sufficient memory, then copy the character data
-\ referenced by s$ into memory as a counted string with cell-width counter
-\ at addr.  If s$ references a sub-string, only that portion is copied
-	>R
-	R@ $.addr @ R@ $.start @ +		( c-addr R:s$)
-	R@ $.len @						( c-addr u R:s$)						\ locate the character data in r$
-	dup 1 cells + allocate THROW	( c-addr u addr R:s$)					\ allocate sufficient for a cell-counted string
-	over over !						( c-addr u addr R:s$)					\ save the character count
-	dup >R							( c-addr u addr R:s$ addr)
-	1 cells + swap move				( R:s$ addr)							\ copy the character data
-	R>								( addr R:s$)
-	R> $drop						( addr)
-;
-
 : $rem ( s$ a n -- s$)
 \ Remove n characters from s$ starting at position a
 \ Following characters within the character buffer are moved as necessary
@@ -206,7 +196,7 @@ variable $.data	0 $.data !							\ see $intialize
 \ Following characters within the character buffer are moved as necessary
 \ The length of the string is always truncated to fit within size
 	swap >R	swap								( c-addr a u R:s$)
-	R@ $.size @ R@ $.len @ - min 				( c-addr a u' R:s$)				\ validate u against remaining capacity
+	R@ $.size @ R@ $.len @ - R@ $.start @ - min ( c-addr a u' R:s$)				\ validate u against remaining capacity
 	over R@ $.len @ swap -						( c-addr a u n R:s$)			\ no. of character to move to make space
 	over R@ $.len dup @ rot + swap !			( c-addr a u' n R:s$)			\ update len
 	rot R@ $.addr @ +							( c-addr u n src R:s$)
@@ -218,10 +208,10 @@ variable $.data	0 $.data !							\ see $intialize
 	R>											( s$)
 ;
 
-: $write ( s$ c -- s$)
-\ write the character c to the end of string s$
+: $push ( s$ c -- s$)
+\ push the character c to the end of string s$
 \ if the buffer is already full then no write occurs
-\ DEBUG - no need for $write now we gave $write-n
+\ DEBUG - no need for $push now we gave $push-n
 	swap >R R@ $size swap $start swap $len nip	( c size start len R:s$)
 	+ swap										( c next size R:s$)				\ next is character after the current last character
 	over - 1 < 									( c next flag R:s$)
@@ -230,8 +220,8 @@ variable $.data	0 $.data !							\ see $intialize
 	1 R@ $.len +! R>							( s$)
 ;	
 
-: $write-n ( s$ x n -- s$)
-\ write the least significant n bytes of x to the end of string s$ in little endian format)
+: $push-n ( s$ x n -- s$)
+\ push the least significant n bytes of x to the end of string s$ in little endian format)
 \ no write occurs if the buffer does not have n bytes of capacity
 	rot >R dup R@ $size swap $start swap $len nip 	( x n n size start len R:s$)
 	+ swap										( x n n next size R:s$)
