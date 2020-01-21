@@ -61,6 +61,7 @@ T{ s" 0x123FE " $q s" 0x\h+" $q $match >R $drop $drop $drop R> }T true ==
 T{ s" $123FE " $q s" $\h+" $q $match >R $drop $drop $drop R> }T true ==
 T{ s" 0x123FE " $q s" 0x\h+" $q $parse >R $drop $drop R> }T true ==
 T{ s" 0x123FG " $q s" 0x\h+" $q $parse >R $drop R> }T false ==
+T{ s" $123FG " $q s" $\h+" $q $parse >R $drop R> }T false ==
 T{ s" 0x123FE " $q s" 0x\h+" $q $parse drop $drop s" 0x123FE" $q $T= }T true ==
 
 \ binary numbers
