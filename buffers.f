@@ -44,3 +44,25 @@
 	write-file THROW						( s$)
 ;
 
+: $emitw ( s$ x n -- s$, "emit wide")
+\ emit the multi-byte charater represented by the least significant n bytes of x 
+\ to the end of buffer s$ in little endian format
+\ no write occurs if the buffer does not have n bytes of capacity
+	rot >R dup R@ $size swap $start swap $len nip 	( x n n size start len R:s$)
+	+ swap										( x n n next size R:s$)
+	over - rot <								( x n next flag R:s$)			\ next is character after the current last character
+	IF drop drop drop R> exit THEN				( x n next R:s$)				\ insufficient capacity
+	swap dup R@ $.len +! swap	 				( x n next R:s$)				\ update len
+	R@ $.addr @ + swap							( x addr n R:s$)
+	0 DO
+		over over swap 255 and swap c! 			( x addr R:s$)
+		1+ swap 8 rshift swap					( x' addr' R:s$)
+	LOOP
+	drop drop R>								( s$)
+;
+
+: $emit ( s$ c -- s$)
+\ emit the byte-sized character c to the end of buffer s$
+\ if the buffer is already full then no write occurs
+	1 $emitw
+;
