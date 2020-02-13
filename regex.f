@@ -93,9 +93,10 @@ BASE !
 \ we are entitled to presume that uT >= 1
 	dup #character and 							( addrT uT addrR uR c bits0..6 )  \ split into the raw character and flags
 	swap #special #negated or and 				( addrT uT addrR uR c bits0..6 bits8..9 )
-	       0 case? IF Text=c?    EXIT THEN					\ unflagged literal character
+	       0 case? IF Text=c?    EXIT THEN					\ unflagged literal character			
 	#special case? IF Text=\c?   EXIT THEN					\ quote\special character
     #negated case? IF Text=c? 0= EXIT THEN					\ negated literal character
+    			   IF Text=\c? 0= EXIT THEN					\ negated special character
 	2drop FALSE		  										\ unsupported flag
 ;
 
@@ -142,22 +143,13 @@ BASE !
 \ get the next character from Regex
 \ quote or special characters preceeded by \ have a flag bit set (#special or)
 \ negation characters preceeded by ~ have a flag bit set (#negated or)
-	RegexLen 1 > IF							( addrT uT addrR uR flag R:c)	\ there is another character to follow
-
-	  RegexC '\' = IF #special  ElSE			\ this is a special\quote character, get special\quote flag
-	  RegexC '~' = IF #negated  ELSE 			\ this is the ~ negation character, get negation flag
-	                    0  THEN THEN        \ normal character
-
-  	  ?dup IF 								\ special character
-	     >R advanceRegex RegexC >R			\ read the character after the special character
-	     advanceRegex 						\ skip
-	     R> R> or EXIT						\ set the flag
-  	  THEN
-
-	THEN
-	RegexC >R
-	advanceRegex
-	R> 									( addrT uT addrR uR c )
+	RegexLen 1 >
+	IF	\ there is another character to follow - check for a special or negated
+		RegexC '\' =	IF advanceRegex RegexC >R advanceRegex R> #special or EXIT THEN \ this is a special\quote character
+		RegexC '~' =	IF advanceRegex RegexC dup '\' = IF drop advanceRegex RegexC >R advanceRegex R> #special #negated or or EXIT THEN
+							>R advanceRegex R> #negated or EXIT THEN \ this is a negated character
+	THEN \ neither special nor negated
+	RegexC >R advanceRegex R> 					( addrT uT addrR uR c )
 ;
 
 
