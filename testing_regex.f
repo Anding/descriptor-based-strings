@@ -73,7 +73,12 @@ T{ s"       Hello it's me" s" \S+" match }T 6 5 -1 ==
 T{ s"       76233" s" !\d+" match }T 6 5 -1 ==
 T{ s" ABC 'a' XYZ" s" '\S'" match }T 4 3 -1 ==
 T{ s" aaaaaaxaaa" s" ~a" match }T 6 1 -1 ==
+T{ s" aaaaaaaaaa" s" b" match }T 0 ==
 T{ s" aaaaaaaaaa" s" ~a" match }T 0 ==
+T{ s" abcdxy" s" dx?" match }T 3 2 -1 ==
+T{ s" abcdx" s" dx?" match }T 3 2 -1 ==
+T{ s" abcdy" s" dx?" match }T 3 1 -1 ==
+T{ s" abcd" s" dx?" match }T 3 1 -1 ==
 T{ s" 1" s" \b" match }T 0 1 -1 ==
 T{ s" 2" s" ~\b" match }T 0 1 -1 ==
 T{ s" 2" s" ~\d" match }T 0 ==
@@ -82,6 +87,7 @@ T{ s"    my test string" s" my" parse-match }T 3 2 -1 ==
 T{ s" my" s" my" parse-match }T -1 0 2 -1  ==
 T{ s" mytest string" s" my" parse-match }T 0 ==
 T{ s" xmy test string" s" my" parse-match }T 0 ==
+CR
 Tend
 CR
 

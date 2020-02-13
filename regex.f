@@ -54,14 +54,14 @@ DEFER matchc
 : Text=c? ( addrT uT addrR uR c -- addrT uT addrR uR FLAG)
 \ preserve the stack and indicate if Text matches literal character c
 \ if c = . then any character will match
-\ we are entitled to presume that uT >= 1
+\ we are entitled to assume that uT >0
 	'.' case? IF true EXIT THEN    \ pattern '.' matches any character
 	>R	TextC  R> =					( ... FLAG )
 ;
 
 : Text=\c? ( addrT uT addrR uR c -- addrT uT addrR uR FLAG)
 \ preserve the stack and indicate if Text matches quote or special character c
-\ we are entitled to presume that uT >= 1
+\ we are entitled to assume that uT >0
 	>R 2>R over c@					( addrT uT x R:c uR addrR)
 	2R> rot R>						( addrT uT addrR uR x c)
 	'd' case? IF  '0' '9' 1+  within  EXIT THEN			\ \d matches any decimal digit, equiv. to [0-9]
@@ -90,7 +90,7 @@ BASE !
 
 : Textc? ( addrT uT addrR uR c -- addrT uT addrR uR FLAG)
 \ preserve the stack and indicate if Text matches character
-\ we are entitled to presume that uT >= 1
+	>R Text? 0= IF R> drop false EXIT THEN R>		\ no characters implies no match
 	dup #character and 							( addrT uT addrR uR c bits0..6 )  \ split into the raw character and flags
 	swap #special #negated or and 				( addrT uT addrR uR c bits0..6 bits8..9 )
 	       0 case? IF Text=c?    EXIT THEN					\ unflagged literal character			
@@ -167,7 +167,6 @@ BASE !
 		Text? IF false EXIT THEN
 		2drop drop true EXIT
 	THEN
-	Text? 0= IF false EXIT	THEN								\ check if Text has been exhausted before Regex
 
 	\ perform the appropriate ongoing match
 	getRegexC  >R  								( ... R:c)		\ obtain the next character of Regex and save it out of the way
