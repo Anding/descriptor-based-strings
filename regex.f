@@ -242,8 +242,7 @@ BASE !
 		drop 2drop 2drop false EXIT									\ if no match here, then no match at all
 	THEN
 
-	RegexC
-	'!' = IF														\ look for an anchored match and whitepaces
+	RegexC '!' = IF													\ look for an anchored match and whitepaces
 		anchored-whitespace-match?
 		IF >R - R> swap true EXIT THEN 								\ calculate length and start, exit true
 		drop drop 2drop 2drop false EXIT							\ if no match here, then no match at all

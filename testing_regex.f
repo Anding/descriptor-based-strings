@@ -75,18 +75,73 @@ T{ s" ABC 'a' XYZ" s" '\S'" match }T 4 3 -1 ==
 T{ s" aaaaaaxaaa" s" ~a" match }T 6 1 -1 ==
 T{ s" aaaaaaaaaa" s" b" match }T 0 ==
 T{ s" aaaaaaaaaa" s" ~a" match }T 0 ==
+T{ s" 1" s" \b" match }T 0 1 -1 ==
+T{ s" 2" s" ~\b" match }T 0 1 -1 ==
+T{ s" 2" s" ~\d" match }T 0 ==
 T{ s" abcdxy" s" dx?" match }T 3 2 -1 ==
 T{ s" abcdx" s" dx?" match }T 3 2 -1 ==
 T{ s" abcdy" s" dx?" match }T 3 1 -1 ==
 T{ s" abcd" s" dx?" match }T 3 1 -1 ==
-T{ s" 1" s" \b" match }T 0 1 -1 ==
-T{ s" 2" s" ~\b" match }T 0 1 -1 ==
-T{ s" 2" s" ~\d" match }T 0 ==
+T{ s" abc" s" dx?" match }T 0 ==
+T{ s" abc7xy" s" \dx?" match }T 3 2 -1 ==
+T{ s" abc7x" s" \dx?" match }T 3 2 -1 ==
+T{ s" abc7y" s" \dx?" match }T 3 1 -1 ==
+T{ s" abc7" s" \dx?" match }T 3 1 -1 ==
+T{ s" abc" s" \dx?" match }T 0 ==
+T{ s" abcd0y" s" d\b?" match }T 3 2 -1 ==
+T{ s" abcd0" s" d\b?" match }T 3 2 -1 ==
+T{ s" abcdy" s" d\b?" match }T 3 1 -1 ==
+T{ s" abcd" s" d\b?" match }T 3 1 -1 ==
+T{ s" abc" s" d\b?" match }T 0 ==
+T{ s" [abc" s" [~]*" match }T 0 4 -1 ==
+T{ s" [abc]" s" [~]*]" match }T 0 5 -1 ==
+T{ s" [abc]" s" [~]*]?" match }T 0 5 -1 ==
+T{ s" [abc" s" [~]*]?" match }T 0 4 -1 ==
+T{ s" [abc]def" s" [~]*]" match }T 0 5 -1 ==
+T{ s" [abc]def" s" [~]*]?" match }T 0 5 -1 ==
+T{ s" [abc" s" [~]*" match }T 0 4 -1 ==
+T{ s" [abc0" s" [~\b*\b" match }T 0 5 -1 ==
+T{ s" [abc0" s" [~\b*\b?" match }T 0 5 -1 ==
+T{ s" [abc" s" [~\b*\b?" match }T 0 4 -1 ==
+T{ s" [abc0def" s" [~\b*\b" match }T 0 5 -1 ==
+T{ s" [abc0def" s" [~\b*\b?" match }T 0 5 -1 ==
+T{ s\" [abc\n" s" [~\n*\n" match }T 0 5 -1 ==
+T{ s\" [abc\n" s" [~\n*\n?" match }T 0 5 -1 ==
+T{ s\" [abc" s" [~\n*\n?" match }T 0 4 -1 ==
+T{ s\" [abc\ndef" s" [~\n*\n" match }T 0 5 -1 ==
+T{ s\" [abc\ndef" s" [~\n*\n?" match }T 0 5 -1 ==
+T{ s\" \\abc\n" s" \\~\n*\n" match }T 0 5 -1 ==
+T{ s\" \\abc\n" s" \\~\n*\n?" match }T 0 5 -1 ==
+T{ s\" \\abc" s" \\~\n*\n?" match }T 0 4 -1 ==
+T{ s\" \\abc\ndef" s" \\~\n*\n" match }T 0 5 -1 ==
+T{ s\" \\abc\ndef" s" \\~\n*\n?" match }T 0 5 -1 ==
+T{ s\" \\ a comment\nA" s" \\~\n*\n?" match }T 0 12 -1 ==
+T{ s" my test string" s" my" match }T 0 2 -1 ==
 T{ s" my test string" s" my" parse-match }T 0 2 -1 ==
 T{ s"    my test string" s" my" parse-match }T 3 2 -1 ==
-T{ s" my" s" my" parse-match }T -1 0 2 -1  ==
+T{ s" my" s" my" parse-match }T 0 2 -1  ==
+T{ s"    nmy" s" my" parse-match }T 0  ==
+T{ s"    myx" s" my" parse-match }T 0  ==
+T{ s" [abc" s" [~]*" parse-match }T 0 4 -1 ==
+T{ s" [abc]" s" [~]*]" parse-match }T 0 5 -1 ==
+T{ s" [abc]" s" [~]*]?" parse-match }T 0 5 -1 ==
+T{ s" [abc" s" [~]*]?" parse-match }T 0 4 -1 ==
+T{ s\" \\abc\n" s" \\~\n*\n" parse-match }T 0 5 -1 ==
+T{ s\" \\abc\n" s" \\~\n*\n?" parse-match }T 0 5 -1 ==
+T{ s\" \\abc" s" \\~\n*\n?" parse-match }T 0 4 -1 ==
 T{ s" mytest string" s" my" parse-match }T 0 ==
 T{ s" xmy test string" s" my" parse-match }T 0 ==
+T{ s" [abc] def" s" [~]*]" parse-match }T 0 5 -1 ==
+T{ s" [abc] def" s" [~]*]?" parse-match }T 0 5 -1 ==
+T{ s\" \\abc\ndef" s" \\~\n*" parse-match }T 0 4 -1 ==
+T{ s\" \\abc\ndef" s" \\~\n*" parse-match }T 0 4 -1 ==
+T{ s\" \\ a comment   \nA" s" \\~\n*" parse-match }T 0 14 -1 ==
+T{ s\"    \\ a comment   \nA" s" \\~\n*" parse-match }T 3 14 -1 ==
+T{ s\" 1 2 dup \\ a comment\nA" s" \\~\n*" parse-match }T 0  ==
+T{ s\" \\ a comment   " s" \\~\n*" parse-match }T 0 14 -1 ==
+T{ s\"    \\ a comment   " s" \\~\n*" parse-match }T 3 14 -1 ==
+T{ s\" 1 2 dup \\ a comment" s" \\~\n*\n?" parse-match }T 0  ==
+
 CR
 Tend
 CR

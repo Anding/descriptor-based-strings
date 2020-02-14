@@ -33,7 +33,7 @@ T{ s" ABC DEF" $q s" ABC" $q $parse drop $drop s" ABC" $q $= nip nip }T true ==
 T{ s" ABC DEF" $q s" ABC" $q $parse drop swap $drop s"  DEF" $q $= nip nip }T true ==
 T{ s"      ABC DEF" $q s" ABC" $q $parse >R $drop $drop R> }T true ==
 T{ s" ABC" $q s" ABC" $q $parse >R $drop $drop R> }T true ==
-T{ s" ABCDEF" $q s" ABC" $q $parse >R $drop R> }T false ==
+T{ s" ABCDEF" $q s" DEF" $q $parse >R $drop R> }T false ==
 T{ s" ABC DEF" $q s" DEF" $q $parse >R $drop R> }T false ==
 
 \ character literals
@@ -60,6 +60,7 @@ T{ s" 12345 " $q s" \d+" $q $parse drop $drop s" 12345" $q $T= }T true ==
 T{ s" 0x123FE " $q s" 0x\h+" $q $match >R $drop $drop $drop R> }T true ==
 T{ s" $123FE " $q s" $\h+" $q $match >R $drop $drop $drop R> }T true ==
 T{ s" 0x123FE " $q s" 0x\h+" $q $parse >R $drop $drop R> }T true ==
+." ---"
 T{ s" 0x123FG " $q s" 0x\h+" $q $parse >R $drop R> }T false ==
 T{ s" $123FG " $q s" $\h+" $q $parse >R $drop R> }T false ==
 T{ s" 0x123FE " $q s" 0x\h+" $q $parse drop $drop s" 0x123FE" $q $T= }T true ==
@@ -85,8 +86,6 @@ T{ s" : squ dup * ;; etc." $q s" :~;+;;" $q $match >R $drop $drop $drop R> }T tr
 T{ s" : squ dup * ;; etc." $q s" :~;+;;" $q $parse >R $drop $drop R> }T true ==
 T{ s" : squ dup * ;; etc." $q s" :~;+;;" $q $parse drop $drop s" : squ dup * ;;" $q $T= }T true ==	
 	
-cr cr
-
 Tend
 cr 
 bye
