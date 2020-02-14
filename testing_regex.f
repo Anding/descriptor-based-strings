@@ -39,12 +39,12 @@ CR CR
 Tstart
 
 T{ s" my test string" s" my" match }T 0 2 -1 ==
-T{ s" my test string" s" ^my" match }T 0 2 -1 ==
-T{ s" my test string" s" !my" match }T 0 2 -1 ==
-T{ s"    my test string" s" !my" match }T 3 2 -1 ==
+\ T{ s" my test string" s" ^my" match }T 0 2 -1 ==
+\ T{ s" my test string" s" !my" match }T 0 2 -1 ==
+\ T{ s"    my test string" s" !my" match }T 3 2 -1 ==
 T{ s" my test string" s" test" match }T 3 4 -1 ==
 T{ s" my test string" s" ng" match }T 12 2 -1 ==
-T{ s" my test string" s" ng$" match }T 12 2 -1 ==
+\ T{ s" my test string" s" ng$" match }T 12 2 -1 ==
 T{ s" my test string" s" t.st" match }T 3 4 -1 ==
 T{ s" my test string" s" s*tr" match }T 8 3 -1 ==
 T{ s" my test sssstring" s" s*tr" match }T 8 6 -1 ==

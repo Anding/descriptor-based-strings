@@ -100,8 +100,6 @@ BASE !
 	2drop FALSE		  										\ unsupported flag
 ;
 
-
-
 \ Define words that manipulate or inspect the regular expression
 \ ------------------------------------------------------
 
@@ -120,12 +118,13 @@ BASE !
 	1 - swap 1+ swap
 ;
 
-: Regex$? ( addrR uR -- addrR uR FLAG)
-\ preserve the stack and indicate if Regex is terminating in $
-	RegexC '$' =					( ... FLAG1 )			\ regexp is $
-	over 1 = 						( ... FLAG1 FLAG2)		\ regexp is 1 character in length
-	and
-;
+\ uncomment these lines to support the REGEX characters '$'
+\ : Regex$? ( addrR uR -- addrR uR FLAG)
+\ \ preserve the stack and indicate if Regex is terminating in $
+\ 	RegexC '$' =					( ... FLAG1 )			\ regexp is $
+\ 	over 1 = 						( ... FLAG1 FLAG2)		\ regexp is 1 character in length
+\ 	and
+\ ;
 
 
 \ Define words that analyze the regular expression, possible skipping inspected characters
@@ -163,10 +162,12 @@ BASE !
 
 	\ check the exit conditions first
 	RegexLen 0= IF 2drop drop true EXIT THEN					\ a null Regex string means it has been fully matched!
-	Regex$? IF 													\ check for end-of-string match
-		Text? IF false EXIT THEN
-		2drop drop true EXIT
-	THEN
+	
+\ 	uncomment these lines to support the REGEX characters '$'
+\ 	Regex$? IF 													\ check for end-of-string match
+\ 		Text? IF false EXIT THEN
+\ 		2drop drop true EXIT
+\ 	THEN
 
 	\ perform the appropriate ongoing match
 	getRegexC  >R  								( ... R:c)		\ obtain the next character of Regex and save it out of the way
@@ -213,43 +214,44 @@ BASE !
 
 \ matchreps and matchc reference each other need to be built with vectored execution
 
-: anchored-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
-   'Text >R 	 						( R:addr0)			\ save address zero of Text
-   advanceRegex
-   RegexC '^' =  IF
-    	advanceRegex
-		#special-s countreps								\ overlook succeeding whitespaces
-		R> + >R												\ move the corresp
-   THEN
-   matchhere 							( ... addrN TRUE | FALSE R:addr0)
-   R> swap ;
-
-: anchored-whitespace-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 start FALSE | addrN addr0 start TRUE )
-    'Text >R 	 							( R:addr0)				\ save address zero of Text
-	advanceRegex
-	#special-s countreps R> over >R + >R  	( ... R:addr0 start)	\ count 0 or more whitespaces
-	matchhere
-    R> R> rot ;
+\ uncomment these lines to support the REGEX characters '^' and '!'
+\ : anchored-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
+\    'Text >R 	 						( R:addr0)			\ save address zero of Text
+\    advanceRegex
+\    RegexC '^' =  IF
+\     	advanceRegex
+\ 		#special-s countreps								\ overlook succeeding whitespaces
+\ 		R> + >R												\ move the corresp
+\    THEN
+\    matchhere 							( ... addrN TRUE | FALSE R:addr0)
+\    R> swap ;
+\ 
+\ : anchored-whitespace-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 start FALSE | addrN addr0 start TRUE )
+\     'Text >R 	 							( R:addr0)				\ save address zero of Text
+\ 	advanceRegex
+\ 	#special-s countreps R> over >R + >R  	( ... R:addr0 start)	\ count 0 or more whitespaces
+\ 	matchhere
+\     R> R> rot ;
 
 : match ( addrT uT addrR uR -- first len TRUE | FALSE )
 \ search for regexp (addrR uR) anywhere in text (addrT uT)
 \ return the position of the start of the match, the length of the match, and TRUE
 \ or FALSE if there is no match
 
-    RegexC '^' = IF													\ look for an anchored match at the start of Text
-    	anchored-match?						( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
-		IF - 0 swap true EXIT THEN				  		 		    \ calculate length and start, exit true
-		drop 2drop 2drop false EXIT									\ if no match here, then no match at all
-	THEN
-
-	RegexC '!' = IF													\ look for an anchored match and whitepaces
-		anchored-whitespace-match?
-		IF >R - R> swap true EXIT THEN 								\ calculate length and start, exit true
-		drop drop 2drop 2drop false EXIT							\ if no match here, then no match at all
-	THEN
+\ uncomment these lines to support the REGEX characters '^' and '!'
+\     RegexC '^' = IF												\ look for an anchored match at the start of Text
+\     	anchored-match?						( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
+\ 		IF - 0 swap true EXIT THEN				  		 		    \ calculate length and start, exit true
+\ 		drop 2drop 2drop false EXIT									\ if no match here, then no match at all
+\ 	THEN
+\ 
+\ 	RegexC '!' = IF													\ look for an anchored match and whitepaces
+\ 		anchored-whitespace-match?
+\ 		IF >R - R> swap true EXIT THEN 								\ calculate length and start, exit true
+\ 		drop drop 2drop 2drop false EXIT							\ if no match here, then no match at all
+\ 	THEN
 
 	'Text >R 	 							( addrT uT addrR uR R:addr0)	\ save address zero of Text
-
 	BEGIN									( ... R:addr0)
 		'Text >R  				            ( ... R:addr0 addrT)			\ save the present text address
 		2dup 2>R 						    ( ... R:addr0 addrT addrR uR) 	\ save the full regex
@@ -264,9 +266,8 @@ BASE !
 ;
 
 : parse-match ( addrT uT addrR uR -- first len TRUE | FALSE )
-\ search for regexp (addrR uR) at the start of the text, ignoring whitespaces (addrT uT)
-\ return the position of the start of the match, the length of the match, and TRUE
-\ or FALSE if there is no match
+\ ignore whitepaces then search for regexp at the start of the text
+\ there must be a whitespace or end-of-string immediately following the match
     2over 2over 'Text >R 	 				( ... R:addr0)		\ save address zero of Text
 	#special-s countreps R> over >R + >R  	( ... R:first start)\ pass through 0 or more whitespaces
 	matchhere								( ... addrN TRUE | addrT uT addrR uR FALSE R: first start )
