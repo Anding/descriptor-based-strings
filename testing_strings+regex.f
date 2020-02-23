@@ -85,6 +85,13 @@ T{ s" : squ dup * ;; etc." $q s" :~;+;;" $q $match >R $drop $drop $drop R> }T tr
 T{ s" : squ dup * ;; etc." $q s" :~;+;;" $q $parse >R $drop $drop R> }T true ==
 T{ s" : squ dup * ;; etc." $q s" :~;+;;" $q $parse drop $drop s" : squ dup * ;;" $q $T= }T true ==	
 	
+\ comments
+T{ s\" \\ a comment   \nA" $q s" \\~\n*" $q $parse >R $drop $drop R> }T true ==
+T{ s\"    \\ a comment   \nA" $q s" \\~\n*" $q $parse >R $drop $drop R> }T true ==
+T{ s\" \\ a comment   " $q s" \\~\n*" $q $parse >R $drop $drop R> }T true ==
+T{ s\"    \\ a comment   " $q s" \\~\n*" $q $parse >R $drop $drop R> }T true ==
+
+cr
 Tend
 cr 
 bye
