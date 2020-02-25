@@ -9,11 +9,13 @@ END-STRUCTURE
 989 CONSTANT err.NoFreeStrings						\ some error codes
 
 variable $.data	0 $.data !							\ see $intialize
+variable $.free										\ number of free descriptors
 
 : $initialize ( N --)
 \ create N free descriptors
 \ $.data points to the first free descriptor, or = 0 if there is none
 \ the $.addr field points to the next free descriptor or = 0 if there are none
+	dup $.free !							( N)			\ save the number of free descriptors
 	dup $.string * allocate THROW 			( N addr)		\ allocate space for N descriptor structures
 	dup $.data !							( N addr)		\ $.data points to the first free descriptor
 	swap 1 DO								( addr)
@@ -28,6 +30,7 @@ variable $.data	0 $.data !							\ see $intialize
 	$.data @ ?dup							( addr addr | 0)
 	0= IF err.NoFreeStrings THROW THEN		( addr 0 | err.NoFreeStrings)
 	dup @ $.data !							\ repoint $.data to the next free descriptor
+	-1 $.free +!							\ update the number of free descriptors
 ;
 
 : $make ( c-addr len size flag -- s$)
@@ -57,6 +60,7 @@ variable $.data	0 $.data !							\ see $intialize
 		dup $.string erase					( s$)			\ 'spoil' the string to discourage inadvertent reuse
 		dup $.data @ swap !					( s$)			\ $.addr now points to the address of the next free descriptor
 		$.data !											\ $.data now points to this (free) descriptor
+	1 $.free +!												\ update the number of free descriptors		
 	THEN
 ;
 
@@ -98,6 +102,7 @@ variable $.data	0 $.data !							\ see $intialize
 \ Both $s and $r are on the parameter stack
 \ Both $s and $r reference the same character data in memory, but can take different cuts
 \ $dup is different to dup: with dup, if s$ is subsequently modified, r$ is modified too
+\ permenant strings are duplicated to permenant strings
 	$.new						( s$ r$)
 	over over $.string			( s$ r$ s$ r$ n)
 	move						( s$ r$)				\ copy the descriptor data
