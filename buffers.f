@@ -70,8 +70,6 @@
 : $empty ( s$ -- s$)
 \ empty the contents of the buffer
 \ for speed, only the pointers are reset
-	>R
-	0 R@ $.len !
-	0 R@ $.start !
-	R>
+	0 over $.len !
+	0 over $.start !
 ;
