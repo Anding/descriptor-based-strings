@@ -26,7 +26,7 @@
 	R@ $.len @								( c-addr u R:s$)				\ locate the character data in s$
 	dup $buffer								( c-addr u r$ R:s$)
 	-rot $write								( r$ R:s$)
-	R>										( r$ s$)
+	R> swap									( r$ s$)
 ;	
 
 : $map ( fileid -- s$)
