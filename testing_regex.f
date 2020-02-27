@@ -39,9 +39,7 @@ CR CR
 Tstart
 
 T{ s" my test string" s" my" match }T 0 2 -1 ==
-\ T{ s" my test string" s" ^my" match }T 0 2 -1 ==
 \ T{ s" my test string" s" !my" match }T 0 2 -1 ==
-\ T{ s"    my test string" s" !my" match }T 3 2 -1 ==
 T{ s" my test string" s" test" match }T 3 4 -1 ==
 T{ s" my test string" s" ng" match }T 12 2 -1 ==
 \ T{ s" my test string" s" ng$" match }T 12 2 -1 ==
@@ -141,6 +139,9 @@ T{ s\" 1 2 dup \\ a comment\nA" s" \\~\n*" parse-match }T 0  ==
 T{ s\" \\ a comment   " s" \\~\n*" parse-match }T 0 14 -1 ==
 T{ s\"    \\ a comment   " s" \\~\n*" parse-match }T 3 14 -1 ==
 T{ s\" 1 2 dup \\ a comment" s" \\~\n*\n?" parse-match }T 0  ==
+T{ s" my test string" s" my" initial-match }T 0 2 -1 ==
+T{ s"  my test string" s" my" initial-match }T 0 ==
+T{ s"    my test string" s" \s+" initial-match }T 0 3 -1 ==
 
 CR
 Tend

@@ -214,18 +214,18 @@ BASE !
 
 \ matchreps and matchc reference each other need to be built with vectored execution
 
-\ uncomment these lines to support the REGEX characters '^' and '!'
-\ : anchored-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
-\    'Text >R 	 						( R:addr0)			\ save address zero of Text
-\    advanceRegex
-\    RegexC '^' =  IF
-\     	advanceRegex
-\ 		#special-s countreps								\ overlook succeeding whitespaces
-\ 		R> + >R												\ move the corresp
-\    THEN
-\    matchhere 							( ... addrN TRUE | FALSE R:addr0)
-\    R> swap ;
-\ 
+
+: anchored-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
+   'Text >R 	 						( R:addr0)			\ save address zero of Text
+\   advanceRegex
+   RegexC '^' =  IF
+    	advanceRegex
+		#special-s countreps								\ overlook succeeding whitespaces
+		R> + >R												\ move the corresp
+   THEN
+   matchhere 							( ... addrN TRUE | FALSE R:addr0)
+   R> swap ;
+ 
 \ : anchored-whitespace-match? ( addrT uT addrR uR -- addrT uT addrR uR addr0 start FALSE | addrN addr0 start TRUE )
 \     'Text >R 	 							( R:addr0)				\ save address zero of Text
 \ 	advanceRegex
@@ -265,9 +265,18 @@ BASE !
 	2drop 2drop R> drop	false												\ Text exhausted before a match was found
 ;
 
+: initial-match ( addrT uT addrR uR -- first len TRUE | FALSE )
+\ search for regexp at the start of the text, if TRUE len will always be 0
+    	anchored-match?						( addrT uT addrR uR -- addrT uT addrR uR addr0 FALSE | addrN addr0 TRUE )
+		IF - 0 swap true EXIT THEN				  		 \ calculate length and start, exit true
+		drop 2drop 2drop false 							 \ if no match here, then no match at all	
+;
+
 : parse-match ( addrT uT addrR uR -- first len TRUE | FALSE )
-\ ignore whitepaces then search for regexp at the start of the text
-\ there must be a whitespace or end-of-string immediately following the match
+\ search for regexp at the start of the text
+\ with special conditions: 
+\ (1) ignore leading whitespaces
+\ (2) there must be a whitespace or end-of-string immediately following the match
     2over 2over 'Text >R 	 				( ... R:addr0)		\ save address zero of Text
 	#special-s countreps R> over >R + >R  	( ... R:first start)\ pass through 0 or more whitespaces
 	matchhere								( ... addrN TRUE | addrT uT addrR uR FALSE R: first start )

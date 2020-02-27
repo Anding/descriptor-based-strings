@@ -127,7 +127,7 @@ variable $.free										\ number of free descriptors
 ;
 
 : $prune ( s$ x y -- s$)
-\ Modify s$ by removing x characters from the start and y characters from the end
+\ Modify s$ by taking a substring skipping x characters from the start and y characters from the end
 \ x and y are permitted to be negative if the string buffer contains additional characters on the start and end of the string
 \ boundaries are checked and overpruning simply results in a null string
 	>R >R $len			( s$ len R:y x )
@@ -186,6 +186,7 @@ variable $.free										\ number of free descriptors
 : $rem ( s$ a n -- s$)
 \ Remove n characters from s$ starting at position a
 \ Following characters within the character buffer are moved as necessary
+\ $rem updates the character buffer!
 	rot >R
 	over R@ $.len @	swap - min					( a n' R:s$)					\ validate n against the remaining length
 	dup R@ $.len dup @ rot - swap !				( a n' R:s$)					\ update len

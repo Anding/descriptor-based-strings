@@ -91,6 +91,18 @@ T{ s\"    \\ a comment   \nA" $q s" \\~\n*" $q $parse >R $drop $drop R> }T true 
 T{ s\" \\ a comment   " $q s" \\~\n*" $q $parse >R $drop $drop R> }T true ==
 T{ s\"    \\ a comment   " $q s" \\~\n*" $q $parse >R $drop $drop R> }T true ==
 
+\ $trim
+T{ s" abc" $q $trim s" abc" $q $T= }T true ==
+T{ s"  abc" $q $trim s" abc" $q $T= }T true ==
+T{ s\"  \n\tabc" $q $trim s" abc" $q $T= }T true ==
+
+\ $word
+T{ s" abc" $q $word s" abc" $q $T= >R s" " $q $T= R> }T true true ==
+T{ s" abc def" $q $word s" abc" $q $T= >R s"  def" $q $T= R> }T true true ==
+T{ s"  abc def" $q $word s" abc" $q $T= >R s"  def" $q $T= R> }T true true ==
+T{ s" " $q $word s" " $q $T= >R s" " $q $T= R> }T true true ==
+T{ s\" \n" $q $word s" " $q $T= >R s" " $q $T= R> }T true true ==
+
 cr
 Tend
 cr 

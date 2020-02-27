@@ -58,3 +58,25 @@
 		false
 	THEN
 ;
+
+: $trim ( s$ -- s$)
+\ remove leading whitespaces from s$ by taking a substring to skip them
+	$s s" \s+" initial-match			( s$ first len TRUE | s$ FALSE )
+	IF nip 0 $prune THEN				( s$)
+;
+
+: $word ( s$ -- s$ b$)
+\ parse s$, forth-style, extracting the first word b$ delimited by whitespaces
+\ s$ (modified) is the rest of the string
+\ return an empty string if no match is found
+	$trim 
+	$dup >R								( s$ R:b$)							
+	$s s" \S+" initial-match			( s$ first len TRUE | s$ FALSE R:b$)
+	IF
+		2dup >R >R						( s$ first len R:b$ len first)
+		+ 0 $prune						( s$ R: b$ len first)				\ the rest of the string
+		R> R> R> -rot $sub				( s$ b$)							\ the word
+	ELSE
+		R> 0 0 $sub				( s$ b$)	\ b$ is an empty string
+	THEN
+;
