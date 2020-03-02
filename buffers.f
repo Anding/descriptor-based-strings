@@ -21,12 +21,14 @@
 \ referenced by s$ into a fresh buffer and return a new descriptor r$
 \ if s$ references a sub-string, only that portion is copied
 \ r$ is a permenant string
-	>R
+	>R										( R:s$)
 	R@ $.addr @ R@ $.start @ +				( c-addr R:s$)
 	R@ $.len @								( c-addr u R:s$)				\ locate the character data in s$
-	dup $buffer								( c-addr u r$ R:s$)
-	-rot $write								( r$ R:s$)
-	R> swap									( r$ s$)
+	dup >R									( c-addr u R:s$ u)
+	dup $buffer								( c-addr u r$ R:s$ u)
+	dup >R $.addr @ swap move				( R:s$ u r$)
+	R> R> over $.len !						( r$ R:s$)
+	R> swap
 ;	
 
 : $map ( fileid -- s$)

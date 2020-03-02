@@ -30,6 +30,8 @@ T{ 100 $buffer $len swap $debuffer }T 0 ==
 
 \ $copy
 T{ s" ABCD" $q $copy $T= }T true ==
+T{ s" ABCD" $q $copy $nip $perm swap $debuffer }T true ==
+T{ s" ABCD" $q $copy $nip s" ABCD" $q $T= }T true ==
 
 \ $map and $demap
 T{ s" ABCD" $q test-file $demap $drop }T ==
