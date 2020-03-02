@@ -41,6 +41,8 @@ Tstart
 T{ s" ABC" over >R dup false $make $addr swap $drop }T R> ==
 T{ s$ $len nip }T 26 ==
 T{ s$ $size nip }T 40 ==
+T{ s" ABC" dup -1 $make $perm $nip }T true ==
+T{ s" ABC" dup 0 $make $perm $nip }T false ==
 
 \ $=
 T{ s$ s" 1234" $q $T= }T false ==

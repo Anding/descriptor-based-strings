@@ -50,11 +50,17 @@ variable $.free										\ number of free descriptors
 	0 over $.start !						( s$)								\ set the start
 ;
 
+: $perm ( s$ -- s$ flag)
+\ return true for a permenant string, false otherwise
+	dup $.size @
+	MSB and 0= 0=
+;
+
 : $drop ( s$ --)
 \ allow string management to recycle a the descriptor of a temporary string
 \ The character data itself is not deallocated
 \ $drop is different to drop: with drop, the descriptor s$ remains valid and is not recycled
-	dup $.size @ MSB and IF 
+	$perm IF 
 		drop												\ do not recycle permanent strings
 	ELSE									( s$)
 		dup $.string erase					( s$)			\ 'spoil' the string to discourage inadvertent reuse
@@ -62,6 +68,11 @@ variable $.free										\ number of free descriptors
 		$.data !											\ $.data now points to this (free) descriptor
 	1 $.free +!												\ update the number of free descriptors		
 	THEN
+;
+
+: $nip ( s$ x -- x)
+\ companion to $drop, for convenience
+	swap $drop
 ;
 
 \ Temporary string descriptors are recycled when consumed by a word; permenant string descriptors are not
