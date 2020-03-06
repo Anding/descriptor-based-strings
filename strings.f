@@ -208,18 +208,18 @@ variable $.free										\ number of free descriptors
 	R>											( s$)
 ;
 
-: $ins ( c-addr u s$ a -- s$)
-\ Copy the text characters from c-adder u into s$ at position a
+: $ins ( s$ a c-addr u -- s$)
+\ Copy the text characters from c-addr u into s$ at position a
 \ Following characters within the character buffer are moved as necessary
 \ The length of the string is always truncated to fit within size
-	swap >R	swap								( c-addr a u R:s$)
+	2swap swap >R swap							( c-addr a u R:s$)
 	R@ $.size @ R@ $.len @ - R@ $.start @ - min ( c-addr a u' R:s$)				\ validate u against remaining capacity
 	over R@ $.len @ swap -						( c-addr a u n R:s$)			\ no. of character to move to make space
-	over R@ $.len dup @ rot + swap !			( c-addr a u' n R:s$)			\ update len
+	over R@ $.len dup @ rot + swap !			( c-addr a u n R:s$)			\ update len
 	rot R@ $.addr @ +							( c-addr u n src R:s$)
-	>R over R@ +								( c-addr u n dest R:src s$)
-	R@ swap rot									( c=addr u src dest n R:src s$)
-	move										( c-addr u R:src s$)			\ make space - ready to insert
+	>R over R@ +								( c-addr u n dest R:s$ src)
+	R@ swap rot									( c=addr u src dest n R:s$ src)
+	move										( c-addr u R:s$ src)			\ make space - ready to insert
 	R> swap										( c-addr src u R:s$)
 	move										( r:s$)							\ insert
 	R>											( s$)

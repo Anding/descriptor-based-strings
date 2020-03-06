@@ -59,7 +59,7 @@ T{ t$ 5 7 $rem u$ $T= }T true ==
 T{ u$ 0 100 $rem $len nip }T 0 ==
 
 \ $ins
-T{ s" 1234" s$ 2 $ins v$ $= nip nip }T true ==
+T{ s$ 2 s" 1234" $ins v$ $= nip nip }T true ==
 
 \ $sub
 T{ v$ 2 4 $sub w$ $T= }T true ==

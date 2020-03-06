@@ -36,7 +36,10 @@
 ;
 
 : $parse ( s$ r$ -- b$ s$ TRUE | s$ FALSE)
-\ Search for regex r$ at the start of string s$ ignoring whitespaces if the regexp is found
+\ search for regexp b$ at the start of the text
+\ with special conditions: 
+\ (1) ignore leading whitespaces
+\ (2) there must be a whitespace or end-of-string immediately following the match
 	swap over over >R >R				( r$ s$ R:s$ r$)
 	$s rot drop							( r$ s-addr s-n R:s$ r$)
 	rot $s rot drop						( s-addr s-n r-addr r-n R:s$ r$)		\ traditional representations
@@ -78,5 +81,23 @@
 		R> R> R> -rot $sub				( s$ b$)							\ the word
 	ELSE
 		R> 0 0 $sub				( s$ b$)	\ b$ is an empty string
+	THEN
+;
+
+: $replace ( s$ r$ t$ -- s$ true | s$ false)
+\ search for regex r$ in s$ and if found replace the match with t$ and return true
+\ if no match is found then return false
+	>R over >R swap						( r$ s$ R:t$ s$)
+	$s rot drop							( r$ s-addr s-n R:t$ s$)
+	rot $s rot drop						( s-addr s-n r-addr r-n R:t$ s$)		\ traditional representations
+	match 								( first len TRUE R:t$ s$ | FALSE R:t$ s$)
+	IF 																			\ match found
+		over swap R> -rot				( first s$ first len R:t$)
+		$rem							( first s$ R:t$)
+		swap R@ $s rot drop				( s$ first c-addr n R:t$)
+		$ins							( s$ R:t$)
+		R> $drop true					( s$ true)
+	ELSE
+		R> R> drop false
 	THEN
 ;

@@ -55,6 +55,8 @@ T{ s\" s\"Happy New Year\""  $q s\" s\"~\"+\"" $q $parse drop $drop s\" s\"Happy
 T{ s" 12345 " $q s" \d+" $q $match >R $drop $drop $drop R> }T true ==
 T{ s" 12345 " $q s" \d+" $q $parse >R $drop $drop R> }T true ==
 T{ s" 12345 " $q s" \d+" $q $parse drop $drop s" 12345" $q $T= }T true ==
+T{ s" 1+ " $q s" \d+" $q $parse $nip }T false ==
+T{ s" 1- " $q s" \d+" $q $parse $nip }T false ==
 
 \ hexadecimal numbers
 T{ s" 0x123FE " $q s" 0x\h+" $q $match >R $drop $drop $drop R> }T true ==
@@ -102,6 +104,14 @@ T{ s" abc def" $q $word s" abc" $q $T= >R s"  def" $q $T= R> }T true true ==
 T{ s"  abc def" $q $word s" abc" $q $T= >R s"  def" $q $T= R> }T true true ==
 T{ s" " $q $word s" " $q $T= >R s" " $q $T= R> }T true true ==
 T{ s\" \n" $q $word s" " $q $T= >R s" " $q $T= R> }T true true ==
+
+\ $replace
+T{ s" ABCDEF" $q s" XYZ" $q s" cde" $q $replace $nip }T false ==
+T{ s" ABCDEF" $q s" CDE" $q s" cde" $q $replace $nip }T true  ==
+T{ s" ABCDEF" $q s" CDE" $q s" cde" $q $replace >R s" ABcdeF" $q $T= R> }T true true ==
+T{ s" ABCDEF" $q s" CDE" $q s" ce" $q $replace >R s" ABceF" $q $T= R> }T true true ==
+T{ s" ABCDEF" $q s" ABCDE" $q s" abcde" $q $replace >R s" abcdeF" $q $T= R> }T true true ==
+T{ s" ABCDEF" $q s" DEF" $q s" def" $q $replace >R s" ABCdef" $q $T= R> }T true true ==
 
 cr
 Tend
