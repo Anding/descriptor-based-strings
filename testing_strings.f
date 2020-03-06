@@ -57,6 +57,7 @@ T{ s" ABCD  " $q 0 3 $sub s" XYZ" $write s" ABCXYZ" $q $T= }T true ==
 T{ s$ $len swap 0 0 $rem $len nip = }T true ==
 T{ t$ 5 7 $rem u$ $T= }T true ==
 T{ u$ 0 100 $rem $len nip }T 0 ==
+T{ s" ABCDEF" $q 2 1 $rem s" ABDEF" $q $T= }T true ==
 
 \ $ins
 T{ s$ 2 s" 1234" $ins v$ $= nip nip }T true ==

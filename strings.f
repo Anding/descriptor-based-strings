@@ -201,9 +201,9 @@ variable $.free										\ number of free descriptors
 	rot >R
 	over R@ $.len @	swap - min					( a n' R:s$)					\ validate n against the remaining length
 	dup R@ $.len dup @ rot - swap !				( a n' R:s$)					\ update len
-	swap R@ $.addr @ +							( n dest R:s$)					\ prepare dest and src for MOVE
+	swap R@ $.addr @ + R@ $.start @ +			( n dest R:s$)					\ prepare dest and src for MOVE
 	over over +									( n dest src R:s$)
-	swap rot									( src dest n R:s$)
+	swap rot									( src dest n R:s$)				\ wrong n - should be the # characters that need to be moved
 	move										( R:s$)
 	R>											( s$)
 ;

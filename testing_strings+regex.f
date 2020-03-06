@@ -112,6 +112,8 @@ T{ s" ABCDEF" $q s" CDE" $q s" cde" $q $replace >R s" ABcdeF" $q $T= R> }T true 
 T{ s" ABCDEF" $q s" CDE" $q s" ce" $q $replace >R s" ABceF" $q $T= R> }T true true ==
 T{ s" ABCDEF" $q s" ABCDE" $q s" abcde" $q $replace >R s" abcdeF" $q $T= R> }T true true ==
 T{ s" ABCDEF" $q s" DEF" $q s" def" $q $replace >R s" ABCdef" $q $T= R> }T true true ==
+T{ s" ABCDEF" $q s" C" $q s" X" $q $replace >R s" ABXDEF" $q $T= R> }T true true ==
+T{ s" AB?DEF" $q s" \?" $q s" X" $q $replace >R s" ABXDEF" $q $T= R> }T true true ==
 
 cr
 Tend
