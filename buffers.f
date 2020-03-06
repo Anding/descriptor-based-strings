@@ -75,3 +75,17 @@
 	0 over $.len !
 	0 over $.start !
 ;
+
+: $> ( s$ -- s$)
+\ write the contents of s$ to STDOUT and empty the buffer
+	$s type
+	$empty
+;
+
+: $< ( s$ -- s$)
+\ ACCEPT a line of text from STDIN and append to the buffer
+	dup $.addr @ over $.start @ + 				( s$ addr)
+	over $size swap $len nip -					( s$ addr n)
+	accept										( s$ m )
+	over $.len +!								( s$)
+;

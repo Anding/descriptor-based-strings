@@ -48,5 +48,12 @@ T{ s" ABC" 3 swap false $make 'D' $emit s" ABC" $q $T= }T true ==
 T{ s" ABC" $q $empty $len nip }T 0 ==
 T{ s" ABC" $q $empty $start nip }T 0 ==
 
+\ $> and $<
+T{ cr s" Expect this text duplicated" $q $s type cr $> cr $len swap $drop }T 0 ==
+T{
+	cr ." Please type some text and press enter" 
+	255 $buffer cr $< cr $> $debuffer 
+}T ==
+
 cr Tend
 cr bye
