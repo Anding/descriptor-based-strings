@@ -53,6 +53,15 @@ T{ s" ABC  " 3 swap false $make s" DE" $write s" ABCDE" $q $T= }T true ==
 T{ s" ABCD  " 4 swap false $make s" EF" $write s" ABCDEF" $q $T= }T true ==
 T{ s" ABCD  " $q 0 3 $sub s" XYZ" $write s" ABCXYZ" $q $T= }T true ==
 
+\ $ins
+T{ s$ 2 s" 1234" $ins v$ $= nip nip }T true ==
+
+\ $sub
+T{ v$ 2 4 $sub w$ $T= }T true ==
+T{ w$ 0 2 $sub x$ $T= }T true ==
+T{ s" XABCDEF" $q 1 6 $sub s" ABCDEF" $q $T= }T true ==
+T{ s" ABCDEF" $q 0 0 $sub s" " $q $T= }T true ==
+
 \ $rem
 T{ s$ $len swap 0 0 $rem $len nip = }T true ==
 T{ t$ 5 7 $rem u$ $T= }T true ==
@@ -63,13 +72,12 @@ T{ s" ABCDEF" $q 0 6 $rem s" " $q $T= }T true ==
 T{ s" ABCDEF" $q 5 1 $rem s" ABCDE" $q $T= }T true ==
 T{ s" ABCDEF" $q 0 0 $rem s" ABCDEF" $q $T= }T true ==
 T{ s" ABCDEF" $q 5 0 $rem s" ABCDEF" $q $T= }T true ==
-
-\ $ins
-T{ s$ 2 s" 1234" $ins v$ $= nip nip }T true ==
-
-\ $sub
-T{ v$ 2 4 $sub w$ $T= }T true ==
-T{ w$ 0 2 $sub x$ $T= }T true ==
+T{ s" XABCDEF" $q 1 6 $sub 2 1 $rem s" ABDEF" $q $T= }T true ==
+T{ s" XABCDEF" $q 1 6 $sub 0 1 $rem s" BCDEF" $q $T= }T true ==
+T{ s" XABCDEF" $q 1 6 $sub 0 6 $rem s" " $q $T= }T true ==
+T{ s" XABCDEF" $q 1 6 $sub 5 1 $rem s" ABCDE" $q $T= }T true ==
+T{ s" XABCDEF" $q 1 6 $sub 0 0 $rem s" ABCDEF" $q $T= }T true ==
+T{ s" XABCDEF" $q 1 6 $sub 5 0 $rem s" ABCDEF" $q $T= }T true ==
 
 \ $dup
 T{ w$ $dup nip x$ $T= }T true ==

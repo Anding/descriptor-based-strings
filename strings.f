@@ -199,10 +199,10 @@ variable $.free										\ number of free descriptors
 \ Following characters within the character buffer are moved as necessary
 \ The length of the string is always truncated to fit within size
 	2swap swap >R swap							( c-addr a u R:s$)
-	R@ $.size @ R@ $.len @ - R@ $.start @ - min ( c-addr a u' R:s$)				\ validate u against remaining capacity
+	R@ $size nip R@ $.len @ - R@ $.start @ - min ( c-addr a u' R:s$)			\ validate u against remaining capacity
 	over R@ $.len @ swap -						( c-addr a u n R:s$)			\ n = no. of character to move to make space
 	over R@ $.len dup @ rot + swap !			( c-addr a u n R:s$)			\ update len = len + u
-	rot R@ $.addr @ +							( c-addr u n src R:s$)
+	rot R@ $.addr @ + R@ $.start @ +			( c-addr u n src R:s$)
 	>R over R@ +								( c-addr u n dest R:s$ src)
 	R@ swap rot									( c=addr u src dest n R:s$ src)
 	move										( c-addr u R:s$ src)			\ make space - ready to insert
@@ -219,7 +219,7 @@ variable $.free										\ number of free descriptors
 	R@ $.len @ min 								( a u' R:s$)					\ validate u against current length
 	over R@ $.len @ swap -						( a u n R:s$)					\ n = no. of character to move to make space
 	over R@ $.len dup @ rot - swap !			( a u n R:s$)					\ update len = len - u
-	rot R@ $.addr @ +							( u n dest R:s$)
+	rot R@ $.addr @ + R@ $.start @ +			( u n dest R:s$)
 	>R over R@ +								( u n src R:s$ dest)
 	R@ rot										( u src dest n R:s$ src)
 	move										( u R:s$ src)					\ make space
