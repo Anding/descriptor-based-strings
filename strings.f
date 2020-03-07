@@ -194,28 +194,14 @@ variable $.free										\ number of free descriptors
 	drop drop true
 ;				
 		
-: $rem ( s$ a n -- s$)
-\ Remove n characters from s$ starting at position a
-\ Following characters within the character buffer are moved as necessary
-\ $rem updates the character buffer!
-	rot >R
-	over R@ $.len @	swap - min					( a n' R:s$)					\ validate n against the remaining length
-	dup R@ $.len dup @ rot - swap !				( a n' R:s$)					\ update len
-	swap R@ $.addr @ + R@ $.start @ +			( n dest R:s$)					\ prepare dest and src for MOVE
-	over over +									( n dest src R:s$)
-	swap rot									( src dest n R:s$)				\ wrong n - should be the # characters that need to be moved
-	move										( R:s$)
-	R>											( s$)
-;
-
 : $ins ( s$ a c-addr u -- s$)
 \ Copy the text characters from c-addr u into s$ at position a
 \ Following characters within the character buffer are moved as necessary
 \ The length of the string is always truncated to fit within size
 	2swap swap >R swap							( c-addr a u R:s$)
 	R@ $.size @ R@ $.len @ - R@ $.start @ - min ( c-addr a u' R:s$)				\ validate u against remaining capacity
-	over R@ $.len @ swap -						( c-addr a u n R:s$)			\ no. of character to move to make space
-	over R@ $.len dup @ rot + swap !			( c-addr a u n R:s$)			\ update len
+	over R@ $.len @ swap -						( c-addr a u n R:s$)			\ n = no. of character to move to make space
+	over R@ $.len dup @ rot + swap !			( c-addr a u n R:s$)			\ update len = len + u
 	rot R@ $.addr @ +							( c-addr u n src R:s$)
 	>R over R@ +								( c-addr u n dest R:s$ src)
 	R@ swap rot									( c=addr u src dest n R:s$ src)
@@ -225,3 +211,17 @@ variable $.free										\ number of free descriptors
 	R>											( s$)
 ;
 
+: $rem ( s$ a u -- s$)
+\ Remove u characters from s$ starting at position a
+\ Following characters within the character buffer are moved as necessary
+\ $rem updates the character buffer!
+	rot >R										( a u R:s$)
+	R@ $.len @ min 								( a u' R:s$)					\ validate u against current length
+	over R@ $.len @ swap -						( a u n R:s$)					\ n = no. of character to move to make space
+	over R@ $.len dup @ rot - swap !			( a u n R:s$)					\ update len = len - u
+	rot R@ $.addr @ +							( u n dest R:s$)
+	>R over R@ +								( u n src R:s$ dest)
+	R@ rot										( u src dest n R:s$ src)
+	move										( u R:s$ src)					\ make space
+	drop R> drop R>								( s$)
+;
