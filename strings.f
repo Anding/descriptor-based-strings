@@ -113,10 +113,11 @@ variable $.free										\ number of free descriptors
 \ Both $s and $r are on the parameter stack
 \ Both $s and $r reference the same character data in memory, but can take different cuts
 \ $dup is different to dup: with dup, if s$ is subsequently modified, r$ is modified too
-\ permenant strings are duplicated to permenant strings
+\ permenant strings are duplicated to temproary strings
 	$.new						( s$ r$)
 	over over $.string			( s$ r$ s$ r$ n)
 	move						( s$ r$)				\ copy the descriptor data
+	dup $.size dup @ MSB invert and swap !	( s$ r$)	\ make r$ a temporary string		
 ;
 
 : $sub ( s$ a n -- s$)
